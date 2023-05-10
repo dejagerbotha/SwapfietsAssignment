@@ -1,0 +1,322 @@
+{
+	"info": {
+		"_postman_id": "2dd96a48-5250-4ed7-aab7-b7fe9c4cf0bf",
+		"name": "Swapfiets",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "6405322"
+	},
+	"item": [
+		{
+			"name": "Returns a list of breeds",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const rs = pm.response.json();\r",
+							"\r",
+							"let limit = pm.collectionVariables.get(\"limit\");\r",
+							"let totalRecords = rs.total\r",
+							"\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"if (0 < limit >= totalRecords) {\r",
+							"    pm.test(\"Record count matches the limit total set\", () => {\r",
+							"        pm.expect(limit).to.eql(rs.data.length)\r",
+							"    })\r",
+							"}\r",
+							"\r",
+							"if (limit >= totalRecords) {\r",
+							"    pm.test(\"Record count matches the total records available\", () => {\r",
+							"        pm.expect(totalRecords).to.eql(rs.data.length)\r",
+							"    })\r",
+							"}\r",
+							"\r",
+							"// Assumption that business rules state if the limit is set to 0 that the records returned should 15.\r",
+							"if (limit === 0) {\r",
+							"    pm.test(\"Record count matches the total records available\", () => {\r",
+							"        pm.expect(15).to.eql(rs.data.length)\r",
+							"    })\r",
+							"}\r",
+							"\r",
+							"// Assumption that business rules state if the limit is set to null that the records returned should 25.\r",
+							"if (limit === null) {\r",
+							"    pm.test(\"Record count matches the total records available\", () => {\r",
+							"        pm.expect(25).to.eql(rs.data.length)\r",
+							"    })\r",
+							"}\r",
+							"\r",
+							"/* \r",
+							"The below is the loop logic to iterate through the various scenarios identified during test analysis. Setting the next request to null, exists the loop.\r",
+							"*/\r",
+							"\r",
+							"if (limit == 1) {\r",
+							"    pm.collectionVariables.set(\"limit\", _.random(limit, totalRecords))\r",
+							"    postman.setNextRequest(pm.info.requestId);\r",
+							"}\r",
+							"\r",
+							"if (totalRecords > limit > 0 && limit != null) {\r",
+							"    pm.collectionVariables.set(\"limit\", totalRecords)\r",
+							"    postman.setNextRequest(pm.info.requestId);\r",
+							"}\r",
+							"\r",
+							"if (limit == totalRecords) {\r",
+							"    pm.collectionVariables.set(\"limit\", ++totalRecords)\r",
+							"    postman.setNextRequest(pm.info.requestId);\r",
+							"}\r",
+							"\r",
+							"if (limit > totalRecords) {\r",
+							"    pm.collectionVariables.set(\"limit\", 0)\r",
+							"    postman.setNextRequest(pm.info.requestId);\r",
+							"}\r",
+							"\r",
+							"if (limit == 0) {\r",
+							"    pm.collectionVariables.set(\"limit\", null)\r",
+							"    postman.setNextRequest(pm.info.requestId);\r",
+							"}\r",
+							"\r",
+							"if (limit == null) {\r",
+							"    pm.collectionVariables.unset(\"limit\")\r",
+							"    //postman.setNextRequest(null);\r",
+							"}\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"if (pm.collectionVariables.get(\"limit\") === undefined) {\r",
+							"    pm.collectionVariables.set(\"limit\",1)\r",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "https://catfact.ninja/breeds?limit={{limit}}",
+					"protocol": "https",
+					"host": [
+						"catfact",
+						"ninja"
+					],
+					"path": [
+						"breeds"
+					],
+					"query": [
+						{
+							"key": "limit",
+							"value": "{{limit}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Returns a random cat fact",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const rs = pm.response.json();\r",
+							"\r",
+							"let max_length = pm.collectionVariables.get(\"max_length\")\r",
+							"\r",
+							"if (max_length > 19) {\r",
+							"\r",
+							"    pm.test(\"Fact length string is equal to the length value specified\", () => {\r",
+							"        pm.expect(rs.fact.length).to.eql(rs.length)\r",
+							"    })\r",
+							"    pm.test(\"Fact length string is equal to or less than the max_length parameter\", () => {\r",
+							"        pm.expect(rs.fact.length).to.be.below(++max_length)\r",
+							"    })\r",
+							"    pm.test(\"Fact length value is equal to or less than the max_length parameter\", () => {\r",
+							"        pm.expect(rs.length).to.be.below(++max_length)\r",
+							"    })\r",
+							"\r",
+							"    pm.collectionVariables.set(\"max_length\", 19);\r",
+							"    postman.setNextRequest(pm.info.requestId)\r",
+							"}\r",
+							"\r",
+							"if (max_length < 20) {\r",
+							"    pm.test(\"No facts are provided when the max_length is less than 20\", () => {\r",
+							"        pm.expect(rs.length).to.eql(undefined)\r",
+							"    })\r",
+							"    pm.collectionVariables.unset(\"max_length\")\r",
+							"}\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"if (pm.collectionVariables.get(\"max_length\") === undefined) {\r",
+							"    pm.collectionVariables.set(\"max_length\",_.random(20,140))\r",
+							"}\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "https://catfact.ninja/fact?max_length={{max_length}}",
+					"protocol": "https",
+					"host": [
+						"catfact",
+						"ninja"
+					],
+					"path": [
+						"fact"
+					],
+					"query": [
+						{
+							"key": "max_length",
+							"value": "{{max_length}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get a list of cat facts",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"if (pm.collectionVariables.get(\"limit\") === undefined) {\r",
+							"    pm.collectionVariables.set(\"limit\",1)\r",
+							"}\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const rs = pm.response.json();\r",
+							"\r",
+							"let limit = pm.collectionVariables.get(\"limit\")\r",
+							"let max_length = 140 //Basing max value of curl command\r",
+							"\r",
+							"if (limit === 1) {\r",
+							"\r",
+							"    pm.collectionVariables.set(\"limit\", rs.total)\r",
+							"    postman.setNextRequest(pm.info.requestId)\r",
+							"}\r",
+							"\r",
+							"if (limit === rs.total) {\r",
+							"\r",
+							"    for (let i = 0; i < rs.data.length; i++) {\r",
+							"\r",
+							"        pm.test(\"Fact length string is equal to the value specified for fact: \" + rs.data[i].fact, () => {\r",
+							"            pm.expect(rs.data[i].fact.length).to.eql(rs.data[i].length)\r",
+							"        })\r",
+							"\r",
+							"        pm.test(\"Fact length value is equal to or less than the max_length parameter\", () => {\r",
+							"            pm.expect(rs.data[i].length).to.be.below(++max_length)\r",
+							"        })\r",
+							"\r",
+							"        pm.test(\"Fact length string is equal to or less than the max_length parameter\", () => {\r",
+							"            pm.expect(rs.data[i].length).to.be.below(++max_length)\r",
+							"        })\r",
+							"\r",
+							"        pm.collectionVariables.unset(\"limit\")\r",
+							"    }\r",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "https://catfact.ninja/facts?limit={{limit}}&max_length=140",
+					"protocol": "https",
+					"host": [
+						"catfact",
+						"ninja"
+					],
+					"path": [
+						"facts"
+					],
+					"query": [
+						{
+							"key": "limit",
+							"value": "{{limit}}"
+						},
+						{
+							"key": "max_length",
+							"value": "140"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": 241,
+			"value": ""
+		}
+	]
+}
