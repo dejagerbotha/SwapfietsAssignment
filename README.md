@@ -25,10 +25,10 @@ Please click [here](https://learning.postman.com/docs/collections/running-collec
 - Using the terminal navigate the root folder "Task4_FeAutomation"
 - Run the following command: npm run cypress:open
 - A Cypress modal should pop-up
--- Click on the E2E Testing frame
--- Select a browser and click "Start E2E Testing in *browser of choice*
--- A localhost browser should open, click on the *spec.cy.js* to run the test.
--- Tests should execute automatically
+- Click on the E2E Testing frame
+- Select a browser and click "Start E2E Testing in *browser of choice*
+- A localhost browser should open, click on the *spec.cy.js* to run the test.
+- Tests should execute automatically
 
 ### Additional Information
 
