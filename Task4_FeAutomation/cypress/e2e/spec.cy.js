@@ -51,7 +51,7 @@ describe('Swapfiets Test Spec', () => {
       // Scenario E
       // Order form URL had to be put in a wrapper due a URL redirect.
       cy.origin('https://account.swapfiets.com', () => {
-          cy.get('input[name="firstname"]').type('DeJager')
+          cy.get('input[name="firstname"]').type('DJ')
           cy.get('input[name="lastnamePrefix"]').type('Mr')
           cy.get('input[name="lastname"]').type('Botha')
           cy.get('select[name="Day"]').select('15')
