@@ -18,14 +18,13 @@ Please click [here](https://learning.postman.com/docs/collections/running-collec
 ### Requirements
 
 - NodeJS installed (v14.x, v16.x or 18.x and above)
-- Cypress installed, please refer to [guide](https://docs.cypress.io/guides/getting-started/installing-cypress)
 - IDE of choice (I am using VSCode)
 
 ### Instructions
 
 - Using the terminal navigate the root folder "Task4_FeAutomation"
-- Run npm i to download dependencies
-- Run the following command: npm run cypress:open
+- Run 'npm i' to download Cypress dependencies
+- Run the following command: 'npm run cypress:open'
 - A Cypress modal should pop-up
 - Click on the E2E Testing frame
 - Select a browser and click "Start E2E Testing in *browser of choice*
